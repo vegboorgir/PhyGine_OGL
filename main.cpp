@@ -29,6 +29,7 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
 RigidBox cube;
+RigidBox ground;
 
 const float GRAVITY = -9.8f;
 const float GROUND_Y = -2.0f;
@@ -71,6 +72,11 @@ int main()
 
     cube.position = glm::vec3(0.0f, 3.0f, 0.0f);
     cube.color = glm::vec3(1.0f, 0.2f, 0.3f);
+
+    ground.position = glm::vec3(0.0f, GROUND_Y - 0.05f, 0.0f);
+    ground.halfSize = glm::vec3(10.0f, 0.05f, 10.0f);
+    ground.color = glm::vec3(0.3f, 0.6f, 0.3f);
+    ground.isStatic = true;
 
     Shader ourShader("shader.vs", "shader.fs");
 
@@ -139,10 +145,10 @@ int main()
         glBindVertexArray(VAO);
 
         glm::mat4 groundModel = glm::mat4(1.0f);
-        groundModel = glm::translate(groundModel, glm::vec3(0.0f, GROUND_Y - 0.05f, 0.0f));
-        groundModel = glm::scale(groundModel, glm::vec3(20.0f, 0.1f, 20.0f));
+        groundModel = glm::translate(groundModel, ground.position);
+        groundModel = glm::scale(groundModel, ground.halfSize * 2.0f);
         ourShader.setMat4("model", groundModel);
-        ourShader.setVec3("color", glm::vec3(0.3f,0.6f,0.3f));
+        ourShader.setVec3("color", ground.color);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         glm::mat4 model = glm::mat4(1.0f);
@@ -212,11 +218,12 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 }
 
 void stepPhysics(float dt) {
+    float groundTop = ground.position.y + ground.halfSize.y;
     cube.velocity.y += GRAVITY * dt;
     cube.position.y += cube.velocity.y * dt;
 
-    if (cube.position.y - cube.halfSize.y < GROUND_Y) {
-        cube.position.y = GROUND_Y + cube.halfSize.y;
+    if (cube.position.y - cube.halfSize.y < groundTop) {
+        cube.position.y = groundTop + cube.halfSize.y;
         cube.velocity.y = -cube.velocity.y * 0.6f;
         if (fabs(cube.velocity.y) < 0.5f) cube.velocity.y = 0.0f;
     }
