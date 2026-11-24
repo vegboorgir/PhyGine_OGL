@@ -9,6 +9,7 @@
 
 #include "shader.h"
 #include "camera.h"
+#include "rigidbox.h"
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void mouse_callback(GLFWwindow* window, double xpos, double ypos);
@@ -19,7 +20,7 @@ void stepPhysics(float dt);
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-Camera camera(glm::vec3(0.0f, 1.0f, 8.0f));
+Camera camera(glm::vec3(4.0f, 2.0f, 7.0f), glm::vec3(0.0f, 1.0f, 0.0f), -120.0f, -15.0f);
 float lastX = SCR_WIDTH / 2.0f;
 float lastY = SCR_HEIGHT / 2.0f;
 bool firstMouse = true;
