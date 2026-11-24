@@ -28,11 +28,10 @@ bool firstMouse = true;
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-glm::vec3 cubePos(0.0f, 3.0f, 0.0f);
-float cubeVelY = 0.0f;
+RigidBox cube;
+
 const float GRAVITY = -9.8f;
 const float GROUND_Y = -2.0f;
-const float HALF_SIZE = 0.5f;
 
 const float PHYSICS_DT = 1.0f / 120.0f;
 float accumulator = 0.0f;
@@ -70,7 +69,11 @@ int main()
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_CULL_FACE);
 
+    cube.position = glm::vec3(0.0f, 3.0f, 0.0f);
+    cube.color = glm::vec3(1.0f, 0.2f, 0.3f);
+
     Shader ourShader("shader.vs", "shader.fs");
+
 
     // positions only (3 floats per vertex)
     float vertices[] = {
@@ -143,9 +146,9 @@ int main()
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
         glm::mat4 model = glm::mat4(1.0f);
-        model = glm::translate(model, cubePos);
+        model = glm::translate(model, cube.position);
         ourShader.setMat4("model", model);
-        ourShader.setVec3("color", glm::vec3(1.0f,0.1f,0.3f));
+        ourShader.setVec3("color", cube.color);
         glDrawArrays(GL_TRIANGLES, 0, 36);
 
 
@@ -209,12 +212,12 @@ void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 }
 
 void stepPhysics(float dt) {
-    cubeVelY += GRAVITY * dt;
-    cubePos.y += cubeVelY * dt;
+    cube.velocity.y += GRAVITY * dt;
+    cube.position.y += cube.velocity.y * dt;
 
-    if (cubePos.y - HALF_SIZE < GROUND_Y) {
-        cubePos.y = GROUND_Y + HALF_SIZE;
-        cubeVelY = -cubeVelY * 0.6f;
-        if (fabs(cubeVelY) < 0.5f) cubeVelY = 0.0f;
+    if (cube.position.y - cube.halfSize.y < GROUND_Y) {
+        cube.position.y = GROUND_Y + cube.halfSize.y;
+        cube.velocity.y = -cube.velocity.y * 0.6f;
+        if (fabs(cube.velocity.y) < 0.5f) cube.velocity.y = 0.0f;
     }
 }

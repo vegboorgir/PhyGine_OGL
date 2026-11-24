@@ -6,7 +6,7 @@
 #include <glm/gtc/matrix_transform.hpp>
 
 struct RigidBox {
-	glm::vec3 postion = glm::vec3(0.0f);
+	glm::vec3 position = glm::vec3(0.0f);
 	glm::vec3 velocity = glm::vec3(0.0f);
 	glm::vec3 halfSize = glm::vec3(0.5f);
 	glm::vec3 color = glm::vec3(1.0f);
